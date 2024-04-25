@@ -1,30 +1,23 @@
-version: '3.8'
-
+version: "2.2"
 services:
   jobmanager:
-    image: apache/flink:1.12.4-scala_2.11-java8
-    container_name: my-flink-jobmanager
-    expose:
-      - "6123" # Flink job manager RPC port
+    image: flink:1.18.1-scala_2.12-java8
     ports:
-      - "8081:8081" # Flink web UI port
-      - "6123:6123"
+      - "8081:8081"
     command: jobmanager
     environment:
-      - FLINK_MEM_PREALLER_SIZE=512m  # Adjust memory settings
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanagerg
 
   taskmanager:
-    image: apache/flink:1.12.4-scala_2.11-java8
-    container_name: my-flink-taskmanager
-    expose:
-      - "6121" # Flink task manager RPC port
-      - "6122" # Flink task manager data port
-    ports:
-      - "6121:6121"
-      - "6122:6122"
+    image: flink:1.18.1-scala_2.12-java8
     depends_on:
       - jobmanager
     command: taskmanager
+    scale: 1
     environment:
-      - FLINK_MEM_PREALLER_SIZE=256m  # Adjust memory settings
-      - FLINK_TASKMANAGER_NUMBER_OF_SLOTS=3  # Adjust slots per TaskManager
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.rpc.address: jobmanager
+        taskmanager.numberOfTaskSlots: 2
