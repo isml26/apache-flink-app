@@ -8,7 +8,8 @@ services:
     environment:
       - |
         FLINK_PROPERTIES=
-        jobmanager.rpc.address: jobmanagerg
+        jobmanager.rpc.address: jobmanager
+        kafka.bootstrap.servers: broker:9092
 
   taskmanager:
     image: flink:1.18.1-scala_2.12-java8
@@ -21,3 +22,4 @@ services:
         FLINK_PROPERTIES=
         jobmanager.rpc.address: jobmanager
         taskmanager.numberOfTaskSlots: 2
+        kafka.bootstrap.servers: broker:9092

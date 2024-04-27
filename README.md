@@ -17,3 +17,8 @@ For more information, you can refer to the blog post by IBM titled [Apache Kafka
 - docker exec -it broker /bin/bash
 - kafka-console-consumer --topic financial_transactions --bootstrap-server broker:29092 
 - kafka-console-consumer --topic financial_transactions --bootstrap-server broker:29092 --from-beginning
+- docker network ls
+- docker network inspect <network_name>
+- apt-get update -y
+- apt-get install -y iputils-ping
+- apt-get install -y telnet
