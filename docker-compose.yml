@@ -21,7 +21,7 @@ services:
     hostname: taskmanager
     container_name: taskmanager
     volumes:
-      - ./taskmanager-logs:/opt/flink/log  # Mount a host directory to store TaskManager logs
+      - ./taskmanager-logs:/opt/flink/log  # Mount a host directory to store JobManager logs
     depends_on:
       - jobmanager
     command: taskmanager
@@ -30,7 +30,6 @@ services:
         FLINK_PROPERTIES=
         jobmanager.rpc.address: jobmanager
         taskmanager.numberOfTaskSlots: 2
-
 
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
@@ -83,7 +82,7 @@ services:
     image: postgres:14.0
     container_name: postgres
     ports:
-      - "5432:5432"
+      - "5438:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
