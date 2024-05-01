@@ -10,6 +10,7 @@ services:
       - ./jobmanager-logs:/opt/flink/log  # Mount a host directory to store JobManager logs
     depends_on:
       - broker
+      - postgres
     command: jobmanager
     environment:
       - |
@@ -82,7 +83,7 @@ services:
     image: postgres:14.0
     container_name: postgres
     ports:
-      - "5438:5432"
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres

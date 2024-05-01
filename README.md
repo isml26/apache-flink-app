@@ -22,3 +22,7 @@ For more information, you can refer to the blog post by IBM titled [Apache Kafka
 - apt-get update -y
 - apt-get install -y iputils-ping
 - apt-get install -y telnet
+- sudo docker exec -it [container] cat /etc/hosts
+- psql -U postgres
+- \l ( list all databases)  or  \d (describe database objects such as tables, views, sequences, and indexes)
+- 
