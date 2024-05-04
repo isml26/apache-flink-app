@@ -8,6 +8,7 @@ import Dto.Transaction;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.restartstrategy.RestartStrategies;
 import org.apache.flink.api.common.time.Time;
+import org.apache.flink.connector.elasticsearch.sink.Elasticsearch7SinkBuilder;
 import org.apache.flink.connector.jdbc.JdbcConnectionOptions;
 import org.apache.flink.connector.jdbc.JdbcExecutionOptions;
 import org.apache.flink.connector.jdbc.JdbcSink;
@@ -15,11 +16,17 @@ import org.apache.flink.connector.jdbc.JdbcStatementBuilder;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
 import org.apache.flink.core.fs.FileSystem;
+import org.apache.flink.elasticsearch7.shaded.org.apache.http.HttpHost;
+import org.apache.flink.elasticsearch7.shaded.org.elasticsearch.action.index.IndexRequest;
+import org.apache.flink.elasticsearch7.shaded.org.elasticsearch.client.Requests;
+import org.apache.flink.elasticsearch7.shaded.org.elasticsearch.common.xcontent.XContentType;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 import java.sql.Date;
 import java.util.concurrent.TimeUnit;
+
+import static utils.JsonUtil.convertTransactionToJson;
 
 
 public class DataStreamJob {
@@ -255,6 +262,22 @@ public class DataStreamJob {
                 executionOptions,
                 connectionOptions
         )).name("Insert into sales_per_month table");
+
+        transactionDataStream.sinkTo(
+                new Elasticsearch7SinkBuilder<Transaction>()
+                        .setHosts(new HttpHost("localhost", 9200, "http"))
+                        .setEmitter((transaction, runtimeContext, requestIndexer) -> {
+
+                            String json = convertTransactionToJson(transaction);
+
+                            IndexRequest indexRequest = Requests.indexRequest()
+                                    .index("transactions")
+                                    .id(transaction.getTransactionId())
+                                    .source(json, XContentType.JSON);
+                            requestIndexer.add(indexRequest);
+                        })
+                        .build()
+        ).name("Elasticsearch Sink");
 
 /*
         env.setRestartStrategy(RestartStrategies.fixedDelayRestart(
