@@ -265,7 +265,7 @@ public class DataStreamJob {
 
         transactionDataStream.sinkTo(
                 new Elasticsearch7SinkBuilder<Transaction>()
-                        .setHosts(new HttpHost("localhost", 9200, "http"))
+                        .setHosts(new HttpHost("es-container", 9200, "http"))
                         .setEmitter((transaction, runtimeContext, requestIndexer) -> {
 
                             String json = convertTransactionToJson(transaction);
